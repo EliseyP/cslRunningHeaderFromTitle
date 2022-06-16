@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="gui" script:language="StarBasic" script:moduleType="normal">REM  *****  BASIC  *****
+Option Explicit
+
+Sub guiCorrectRunningHeader
+	Dim oDoc
+	oDoc = ThisComponent
+	ClearAndCorrectHeaders(oDoc)
+	
+End Sub
+
+
+Sub guiUpdateBtnHandler
+	Dim oDoc
+	oDoc = ThisComponent
+	guiUpdater(oDoc)	
+	MsgBox &quot;Метаданные обновлены!&quot;
+End Sub
+
+Sub guiUpdater(oDoc)
+	Dim oDP
+	oDP = oDoc.getDocumentProperties()
+    SetDocumentUserProperty(oDoc, &quot;RunningHeader&quot;, oDialog.getControl(&quot;fldRunHeader&quot;).Text)
+    SetDocumentUserProperty(oDoc, &quot;TitleInText&quot;, oDialog.getControl(&quot;fldTitleInText&quot;).Text)		
+End Sub
+
+Sub guiTitleFromTextHandler
+	Dim oDoc
+	Dim sTit$
+	oDoc = ThisComponent
+	sTit = GetTitleStringFromText(oDoc)
+	sTit = strNonSpaceToSpace(sTit) 
+	If sTit &lt;&gt; &quot;&quot; Then
+		SetDocumentUserProperty(oDoc, &quot;TitleInText&quot;, sTit)
+		oDialog.getControl(&quot;fldTitleInText&quot;).Text = getTitleInText
+	End If
+End Sub
+
+Sub guiRunHeadFromTitleHandler
+	oDialog.getControl(&quot;fldRunHeader&quot;).Text = oDialog.getControl(&quot;fldTitleInText&quot;).Text
+End Sub 
+
+</script:module>

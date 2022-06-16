@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="guiSetRH" script:language="StarBasic" script:moduleType="normal">Sub main
+rem Макрос вызова диалога  
+	&apos;DialogLibraries.LoadLibrary(&quot;XrayTool&quot;)
+	DialogLibraries.LoadLibrary(&quot;CslRunningHeaderFromTitle&quot;)
+	Dim oDoc
+
+	oDoc = ThisComponent
+	oDialog = CreateUnoDialog(DialogLibraries.CslRunningHeaderFromTitle.dlg_setProp)
+
+	rem Если по какй-то причине полей нет, создать их.
+	AddNewPropToExistHymns(oDoc)
+	
+	rem Заполнение полей
+	oDialog.getControl(&quot;fldRunHeader&quot;).Text 	= getRunningHeader(oDoc)
+	oDialog.getControl(&quot;fldTitleInText&quot;).Text 	= getTitleInText(oDoc)
+	
+	oDialog.Execute()
+End Sub
+</script:module>

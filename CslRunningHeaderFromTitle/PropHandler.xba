@@ -1,0 +1,160 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE script:module PUBLIC "-//OpenOffice.org//DTD OfficeDocument 1.0//EN" "module.dtd">
+<script:module xmlns:script="http://openoffice.org/2000/script" script:name="PropHandler" script:language="StarBasic" script:moduleType="normal">REM  *****  BASIC  *****
+Sub AddNewDocumentProperty(oDoc, prop$, val)
+	Dim oUDP
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+	
+	oUDP = oDoc.getDocumentProperties().UserDefinedProperties
+	If Not oUDP.getPropertySetInfo().hasPropertyByName(prop) Then
+		oUDP.addProperty(prop, _
+			com.sun.star.beans.PropertyAttribute.MAYBEVOID + _
+			com.sun.star.beans.PropertyAttribute.REMOVEABLE + _
+			com.sun.star.beans.PropertyAttribute.MAYBEDEFAULT, _
+			val)
+	End If 
+End Sub
+
+Sub AddNewPropToExistHymns(Optional oDoc)
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+
+	AddNewDocumentProperty(oDoc, &quot;TitleInText&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;RunningHeader&quot;, &quot;&quot;)
+	rem Для совместимости с полями шаблона &quot;Гимнография 20 новый&quot;.
+	AddNewDocumentProperty(oDoc, &quot;HymnCode&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;FirstWords&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;LastAuthorModifDate&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;LastEditorModifDate&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;DateWriting&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;Type&quot;, &quot;&quot;)
+	AddNewDocumentProperty(oDoc, &quot;Whom&quot;, &quot;&quot;)
+End Sub
+
+Function getPropString(Optional oDoc, prop$) As String
+	Dim oUDP
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+	
+	oUDP = oDoc.getDocumentProperties().UserDefinedProperties
+	If oUDP.getPropertySetInfo().hasPropertyByName(prop) Then
+		getPropString = oUDP.getPropertyValue(prop)
+	End If	
+End Function
+
+
+Function getPropDate(Optional oDoc, prop$) As New com.sun.star.util.Date
+	Dim oUDP
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+	
+	oUDP = oDoc.getDocumentProperties().UserDefinedProperties
+	If oUDP.getPropertySetInfo().hasPropertyByName(prop) Then
+		getPropDate = oUDP.getPropertyValue(prop)
+	End If	
+End Function
+
+
+Function getTitleInText(Optional oDoc) As String
+	If IsMissing(oDoc) Then oDoc = ThisComponent	
+	getTitleInText = getPropString(oDoc, &quot;TitleInText&quot;)
+End Function
+
+Function getRunningHeader(Optional oDoc) As String
+	If IsMissing(oDoc) Then oDoc = ThisComponent	
+	getRunningHeader = getPropString(oDoc, &quot;RunningHeader&quot;)
+End Function
+
+Sub SetDocumentUserProperty(oDoc, prop$, val$)
+	Dim oUDP
+
+	oUDP = oDoc.getDocumentProperties().UserDefinedProperties
+	If oUDP.getPropertySetInfo().hasPropertyByName(prop) Then
+		oUDP.setPropertyValue(prop, val)
+	End If	
+End Sub
+
+
+Sub moveTitleToRunHeader(Optional oDoc)
+&apos; текст поля &quot;Заглавие&quot; переместить в поле &quot;Колонтитул&quot; 
+	Dim oUDP, oDP
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+	
+	oDP = oDoc.getDocumentProperties()
+	oUDP = oDP.UserDefinedProperties
+	If oUDP.getPropertySetInfo().hasPropertyByName(&quot;RunningHeader&quot;) Then
+		If oDP.Title &lt;&gt; &quot;&quot; Then
+			SetDocumentUserProperty(oDoc, &quot;RunningHeader&quot;, oDP.Title)
+		End IF	
+	End If 
+End Sub
+
+Function GetTitleString (Optional vDoc) As String
+&apos; Если есть непустое польз.поле &quot;TitleInText&quot;, выводит его содерж-е, иначе
+&apos; ищет абзац со стилем Title и выводит его текст
+	Dim oDoc 
+	Dim oEnum
+	Dim oPara
+	Dim Out$
+	
+	If IsMissing(vDoc) Then vDoc = ThisComponent
+	
+	If getTitleInText(vDoc) &lt;&gt; &quot;&quot; Then
+		GetTitleString = getTitleInText(vDoc)
+	Else 
+		oEnum = vDoc.Text.createEnumeration()
+		Do While oEnum.hasMoreElements()
+			oPar = oEnum.nextElement()
+			if oPar.ParaStyleName = &quot;Title&quot; Then
+				Out = oPar.String
+				Out = Replace(Out, Chr(10), &quot; &quot;)
+				GetTitleString = Out
+				Exit function
+			End If 
+		Loop
+	End IF
+End Function
+
+Function GetTitleStringFromText (Optional vDoc) As String
+&apos; ищет абзац со стилем Title и выводит его текст
+	Dim oDoc 
+	Dim oEnum
+	Dim oPara, oPar
+	Dim Out$
+	
+	If IsMissing(vDoc) Then vDoc = ThisComponent
+	
+	oEnum = vDoc.Text.createEnumeration()
+	Do While oEnum.hasMoreElements()
+		oPar = oEnum.nextElement()
+		if oPar.ParaStyleName = &quot;Title&quot; Then
+			Out = oPar.String
+			Out = Replace(Out, Chr(10), &quot; &quot;)
+			GetTitleStringFromText = Out
+			Exit Function
+		End If 
+	Loop
+End Function
+
+Sub setTitleInText(Optional oDoc)
+&apos; заполнить поле TitleInText (&quot;Заголовок&quot;)
+	Dim oUDP, oDP
+	Dim sTitleString$
+	If IsMissing(oDoc) Then oDoc = ThisComponent
+	
+	oDP = oDoc.getDocumentProperties()
+	oUDP = oDP.UserDefinedProperties
+	If oUDP.getPropertySetInfo().hasPropertyByName(&quot;TitleInText&quot;) Then
+		sTitleString = GetTitleString(oDoc)
+		If sTitleString &lt;&gt; &quot;&quot; Then
+			SetDocumentUserProperty(oDoc, &quot;TitleInText&quot;, sTitleString)
+		End IF	
+	End If 
+End Sub
+
+Function strNonSpaceToSpace(s$)
+    s = Replace(s, Chr(10), &quot; &quot;)
+	s = Replace(s, Chr(160), &quot; &quot;)
+	s = Replace(s, Chr(13), &quot; &quot;)
+	s = Replace(s, Chr(9), &quot; &quot;)
+	strNonSpaceToSpace = s
+End Function
+
+</script:module>
