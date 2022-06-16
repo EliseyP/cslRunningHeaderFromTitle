@@ -12,5 +12,7 @@
 
 <img src="images/example.jpeg" width="800" height="220">
 
+Для запуска диалога есть своя кнопка ![](images/install_16.png) на отдельной `toolbar`-панели, а также подменю в `Menu|Сервис|Addons`.
+
 
 
