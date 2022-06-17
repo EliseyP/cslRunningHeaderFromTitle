@@ -1,6 +1,6 @@
 # cslRunningHeaderFromTitle
 
-`LibreOffice`-расширение для запуска `gui`-диалога, позволяющего оперировать колонтитулом для документа из шаблона `Гимнография 20 новый` из проекта [csl_odt2tex](https://github.com/EliseyP/csl_odt2tex).
+`LibreOffice`-расширение для запуска `gui`-диалога, позволяющего оперировать текстом колонтитула для документа с шаблоном `Гимнография 20 новый` из проекта [csl_odt2tex](https://github.com/EliseyP/csl_odt2tex).
 
 Для запуска диалога есть своя кнопка ![](images/install_16.png) на отдельной `toolbar`-панели, а также подменю в `Menu|Сервис|Addons`.
 
