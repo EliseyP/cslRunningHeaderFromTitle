@@ -10,7 +10,7 @@
       <l:LibreOffice-minimal-version value="3.5" dep:name="LibreOffice 3,5 minimum, or more recent" />
    </dependencies>
    <update-download>
-      <src xlink:href="https://github.com/EliseyP/cslRunningHeaderFromTitle/raw/master/CslRunningHeaderFromTitle.oxt" />
+      <src xlink:href="https://github.com/EliseyP/cslRunningHeaderFromTitle/blob/main/CslRunningHeaderFromTitle-L-0.0.3.oxt" />
    </update-download>
    <publisher>
       <name lang="en" xlink:href="https://github.com/EliseyP/cslRunningHeaderFromTitle/">CslRunningHeaderFromTitle</name>
